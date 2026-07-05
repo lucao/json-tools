@@ -1,0 +1,117 @@
+/* JSON Tools - Main Stylesheet */
+
+.root {
+    -fx-font-family: "Segoe UI", "Roboto", sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: #f5f5f5;
+}
+
+/* Primary button style */
+.primary-button {
+    -fx-background-color: #1976D2;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 6 16;
+    -fx-background-radius: 4;
+}
+
+.primary-button:hover {
+    -fx-background-color: #1565C0;
+}
+
+.primary-button:pressed {
+    -fx-background-color: #0D47A1;
+}
+
+/* Status label */
+.status-label {
+    -fx-font-style: italic;
+    -fx-text-fill: #666;
+}
+
+/* Breadcrumb navigation */
+.breadcrumb {
+    -fx-font-family: monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #555;
+    -fx-padding: 4 8;
+    -fx-background-color: #e0e0e0;
+    -fx-background-radius: 3;
+}
+
+/* Table styling */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 4;
+}
+
+.table-view .column-header {
+    -fx-background-color: #e3f2fd;
+    -fx-font-weight: bold;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #bbdefb;
+}
+
+/* Tree view styling */
+.tree-view {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 4;
+}
+
+.tree-cell:selected {
+    -fx-background-color: #bbdefb;
+}
+
+/* Tab pane */
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: #e3f2fd;
+}
+
+.tab:selected .tab-label {
+    -fx-font-weight: bold;
+}
+
+/* Text area */
+.text-area {
+    -fx-font-family: monospace;
+    -fx-font-size: 12px;
+}
+
+/* Progress bar */
+.progress-bar > .bar {
+    -fx-background-color: #4CAF50;
+    -fx-background-radius: 3;
+}
+
+.progress-bar > .track {
+    -fx-background-color: #e0e0e0;
+    -fx-background-radius: 3;
+}
+
+/* Hyperlinks in table */
+.hyperlink {
+    -fx-text-fill: #1976D2;
+    -fx-underline: true;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: #0D47A1;
+}
+
+/* Tooltips */
+.tooltip {
+    -fx-background-color: #333;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-padding: 8 12;
+    -fx-font-size: 12px;
+}
+
+/* Separator */
+.separator .line {
+    -fx-border-color: #ccc;
+}
