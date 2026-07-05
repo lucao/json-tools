@@ -1,7 +1,6 @@
 target/
 *.class
 *.jar
-!.mvn/wrapper/maven-wrapper.jar
 .idea/
 *.iml
 .settings/
@@ -11,10 +10,13 @@ target/
 *.log
 .DS_Store
 mvnw.cmd
-.mvn\local-settings.xml
-.mvn\wrapper\maven-wrapper.properties
+.mvn/local-settings.xml
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
 batch-test-example.json
 user-validation-schema.json
+
 # JDK distribution
 jdk-25/
 jdk-25.0.2.zip
+
