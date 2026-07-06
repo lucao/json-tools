@@ -1,0 +1,352 @@
+[
+  {
+    "name": "Extrato NIT 1115174190",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1115174190"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1083902650",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1083902650"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1142840693",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1142840693"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1281306367",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1281306367"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1117370372",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1117370372"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1172713298",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1172713298"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1230726891",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1230726891"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1628785772",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1628785772"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1629981615",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1629981615"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1283864167",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1283864167"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1123527648",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1123527648"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1238578629",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1238578629"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1642104783",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1642104783"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1255904010",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1255904010"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1111223678",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1111223678"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1165269634",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1165269634"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1262929772",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1262929772"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1309219631",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1309219631"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1121410641",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1121410641"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1139324849",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1139324849"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 2093663855",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "2093663855"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1271820876",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1271820876"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1146671682",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1146671682"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1267482368",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1267482368"
+    },
+    "body": null,
+    "expectedStatus": 200
+  },
+  {
+    "name": "Extrato NIT 1131355519",
+    "url": "http://v121h159:7001/extrato/v5/consulta",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Basic YXBwdXNlcjphcHB1c2VyMDA=",
+      "Accept": "application/json"
+    },
+    "queryParams": {
+      "nit": "1131355519"
+    },
+    "body": null,
+    "expectedStatus": 200
+  }
+]

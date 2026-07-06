@@ -53,7 +53,7 @@ public class HttpService {
 
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                 .uri(URI.create(fullUrl))
-                .timeout(Duration.ofSeconds(60));
+                .timeout(Duration.ofMinutes(10));
 
         if (headers != null) {
             headers.forEach(requestBuilder::header);

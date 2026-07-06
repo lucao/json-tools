@@ -3,6 +3,7 @@ package com.jsontools.ui;
 import com.jsontools.model.BatchTestRequest;
 import com.jsontools.model.BatchTestResult;
 import com.jsontools.testing.BatchTestRunner;
+import com.jsontools.testing.CsvBatchLoader;
 import com.jsontools.testing.TestStatistics;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleLongProperty;
@@ -33,6 +34,7 @@ public class BatchTestTab extends BorderPane {
     private final TableView<BatchTestResult> resultsTable;
     private final ObservableList<BatchTestResult> resultItems;
     private final TextArea statsArea;
+    private final TextArea responseArea;
     private final ProgressBar progressBar;
     private final Label progressLabel;
 
@@ -147,42 +149,163 @@ public class BatchTestTab extends BorderPane {
 
         resultsTable.getColumns().addAll(nameCol, methodCol, urlCol, statusCol, timeCol, resultCol, errorCol);
 
-        // --- Right: Statistics panel ---
+        // --- Right: Statistics + Response detail ---
         statsArea = new TextArea();
         statsArea.setEditable(false);
         statsArea.setPrefColumnCount(40);
         statsArea.setStyle("-fx-font-family: monospace; -fx-font-size: 12;");
         statsArea.setPromptText("Statistics will appear after test run...");
 
+        responseArea = new TextArea();
+        responseArea.setEditable(false);
+        responseArea.setPrefColumnCount(40);
+        responseArea.setWrapText(true);
+        responseArea.setStyle("-fx-font-family: monospace; -fx-font-size: 12;");
+        responseArea.setPromptText("Select a test result to view response body...");
+
+        // Show response body when selecting a row
+        resultsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !newVal.isSuccess()) {
+                responseArea.setText(formatResponseDetail(newVal));
+            } else if (newVal != null) {
+                responseArea.setText("[PASS] " + newVal.getRequestName() + "\n\nResponse body:\n" +
+                        (newVal.getResponseBody() != null ? newVal.getResponseBody() : "(empty)"));
+            } else {
+                responseArea.setText("");
+            }
+        });
+
+        TabPane rightTabs = new TabPane();
+        Tab statsTab = new Tab("Statistics", statsArea);
+        statsTab.setClosable(false);
+        Tab responseTab = new Tab("Response Body", responseArea);
+        responseTab.setClosable(false);
+        rightTabs.getTabs().addAll(statsTab, responseTab);
+
         SplitPane split = new SplitPane();
-        split.getItems().addAll(resultsTable, statsArea);
-        split.setDividerPositions(0.65);
+        split.getItems().addAll(resultsTable, rightTabs);
+        split.setDividerPositions(0.6);
 
         setCenter(split);
+    }
+
+    private String formatResponseDetail(BatchTestResult result) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== ").append(result.getRequestName()).append(" ===\n");
+        sb.append("Status: ").append(result.getStatusCode()).append("\n");
+        sb.append("Time: ").append(result.getResponseTimeMs()).append(" ms\n");
+        if (result.getErrorMessage() != null) {
+            sb.append("Error: ").append(result.getErrorMessage()).append("\n");
+        }
+        sb.append("\n--- Response Body ---\n");
+        if (result.getResponseBody() != null && !result.getResponseBody().isEmpty()) {
+            sb.append(result.getResponseBody());
+        } else {
+            sb.append("(no response body)");
+        }
+        return sb.toString();
     }
 
     private void loadTestFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Batch Test File");
-        fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("JSON Files", "*.json")
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Supported", "*.json", "*.csv"),
+                new FileChooser.ExtensionFilter("JSON Files", "*.json"),
+                new FileChooser.ExtensionFilter("CSV Files (NIT list)", "*.csv")
         );
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
             try {
-                loadedRequests = testRunner.loadRequests(file);
-                fileStatusLabel.setText("Loaded: " + file.getName() +
-                        " (" + loadedRequests.size() + " requests)");
-                fileStatusLabel.setStyle("-fx-text-fill: green;");
-                statsArea.setText("File loaded: " + file.getName() + "\n" +
-                        loadedRequests.size() + " requests ready to execute.\n\n" +
-                        "Click 'Run Sequential' or 'Run Parallel' to start.");
+                if (file.getName().toLowerCase().endsWith(".csv")) {
+                    loadCsvFile(file);
+                } else {
+                    loadedRequests = testRunner.loadRequests(file);
+                    fileStatusLabel.setText("Loaded: " + file.getName() +
+                            " (" + loadedRequests.size() + " requests)");
+                    fileStatusLabel.setStyle("-fx-text-fill: green;");
+                    statsArea.setText("File loaded: " + file.getName() + "\n" +
+                            loadedRequests.size() + " requests ready to execute.\n\n" +
+                            "Click 'Run Sequential' or 'Run Parallel' to start.");
+                }
             } catch (Exception e) {
                 fileStatusLabel.setText("Load failed");
                 fileStatusLabel.setStyle("-fx-text-fill: red;");
                 statsArea.setText("Error loading file: " + e.getMessage());
             }
         }
+    }
+
+    private void loadCsvFile(File file) {
+        // Show dialog to configure endpoint and auth
+        Dialog<CsvBatchLoader> dialog = new Dialog<>();
+        dialog.setTitle("CSV Batch Configuration");
+        dialog.setHeaderText("Configure endpoint for NIT batch testing");
+
+        ButtonType okButton = new ButtonType("Load", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20));
+
+        TextField urlField = new TextField("http://v121h159:7001/extrato/v5/consulta");
+        urlField.setPrefWidth(400);
+        TextField userField = new TextField("appuser");
+        PasswordField passField = new PasswordField();
+        passField.setText("appuser00");
+        TextField expectedStatusField = new TextField("200");
+        TextField maxRequestsField = new TextField("0");
+        maxRequestsField.setPromptText("0 = all");
+
+        grid.add(new Label("Base URL:"), 0, 0);
+        grid.add(urlField, 1, 0);
+        grid.add(new Label("Username:"), 0, 1);
+        grid.add(userField, 1, 1);
+        grid.add(new Label("Password:"), 0, 2);
+        grid.add(passField, 1, 2);
+        grid.add(new Label("Expected Status:"), 0, 3);
+        grid.add(expectedStatusField, 1, 3);
+        grid.add(new Label("Max Requests (0=all):"), 0, 4);
+        grid.add(maxRequestsField, 1, 4);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == okButton) {
+                return new CsvBatchLoader(
+                        urlField.getText().trim(),
+                        userField.getText().trim(),
+                        passField.getText(),
+                        Integer.parseInt(expectedStatusField.getText().trim())
+                );
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(loader -> {
+            try {
+                int max = Integer.parseInt(maxRequestsField.getText().trim());
+                if (max > 0) {
+                    loadedRequests = loader.loadFromCsv(file, max);
+                } else {
+                    loadedRequests = loader.loadFromCsv(file);
+                }
+                fileStatusLabel.setText("Loaded: " + file.getName() +
+                        " (" + loadedRequests.size() + " requests)");
+                fileStatusLabel.setStyle("-fx-text-fill: green;");
+                statsArea.setText("CSV loaded: " + file.getName() + "\n" +
+                        loadedRequests.size() + " NIT requests ready to execute.\n" +
+                        "URL: " + urlField.getText() + "\n" +
+                        "Auth: Basic (appuser)\n\n" +
+                        "Click 'Run Sequential' or 'Run Parallel' to start.");
+            } catch (Exception e) {
+                fileStatusLabel.setText("Load failed");
+                fileStatusLabel.setStyle("-fx-text-fill: red;");
+                statsArea.setText("Error loading CSV: " + e.getMessage());
+            }
+        });
     }
 
     private void runTests(boolean parallel) {

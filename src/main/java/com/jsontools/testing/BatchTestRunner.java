@@ -80,7 +80,7 @@ public class BatchTestRunner {
         List<BatchTestResult> results = new ArrayList<>();
         for (Future<BatchTestResult> future : futures) {
             try {
-                BatchTestResult result = future.get(120, TimeUnit.SECONDS);
+                BatchTestResult result = future.get(10, TimeUnit.MINUTES);
                 results.add(result);
                 if (onResult != null) {
                     onResult.accept(result);
