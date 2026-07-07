@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.geometry.Insets;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
@@ -25,9 +26,12 @@ public class JsonTableView extends BorderPane {
     private final Label breadcrumb;
     private final Button backButton;
 
+    private List<JsonNodeWrapper> allChildren;
+
     public JsonTableView() {
         this.items = FXCollections.observableArrayList();
         this.navigationStack = new ArrayDeque<>();
+        this.allChildren = new ArrayList<>();
 
         // Navigation bar
         backButton = new Button("← Back");
@@ -108,10 +112,42 @@ public class JsonTableView extends BorderPane {
         showNode(root);
     }
 
+    public void filter(String searchText) {
+        if (searchText == null || searchText.isBlank()) {
+            items.setAll(allChildren);
+        } else {
+            String lower = searchText.toLowerCase();
+            List<JsonNodeWrapper> filtered = allChildren.stream()
+                    .filter(w -> matchesSearch(w, lower))
+                    .toList();
+            items.setAll(filtered);
+        }
+    }
+
+    private boolean matchesSearch(JsonNodeWrapper wrapper, String searchLower) {
+        if (wrapper.getKey().toLowerCase().contains(searchLower)) return true;
+        if (wrapper.getValuePreview().toLowerCase().contains(searchLower)) return true;
+        if (wrapper.getPath().toLowerCase().contains(searchLower)) return true;
+        // Also search recursively into children for non-primitives
+        if (!wrapper.isPrimitive()) {
+            return matchesDeep(wrapper, searchLower);
+        }
+        return false;
+    }
+
+    private boolean matchesDeep(JsonNodeWrapper wrapper, String searchLower) {
+        for (JsonNodeWrapper child : wrapper.getChildren()) {
+            if (child.getKey().toLowerCase().contains(searchLower)) return true;
+            if (child.getValuePreview().toLowerCase().contains(searchLower)) return true;
+            if (!child.isPrimitive() && matchesDeep(child, searchLower)) return true;
+        }
+        return false;
+    }
+
     private void showNode(JsonNodeWrapper node) {
         items.clear();
-        List<JsonNodeWrapper> children = node.getChildren();
-        items.addAll(children);
+        allChildren = node.getChildren();
+        items.addAll(allChildren);
         breadcrumb.setText(node.getPath());
         backButton.setDisable(navigationStack.isEmpty());
     }

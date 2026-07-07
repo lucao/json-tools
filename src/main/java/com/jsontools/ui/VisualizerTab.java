@@ -8,11 +8,17 @@ import com.networknt.schema.ValidationMessage;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,12 +37,23 @@ public class VisualizerTab extends BorderPane {
     private final JsonTableView tableView;
     private final JsonTreeView treeView;
 
+    private final ComboBox<String> authTypeCombo;
+    private final TextField usernameField;
+    private final PasswordField passwordField;
+    private final TextField tokenField;
+    private final HBox basicAuthBox;
+    private final HBox bearerAuthBox;
+
+    private final TextField searchField;
+    private final HBox searchBar;
+    private final Label searchResultsLabel;
+
     public VisualizerTab(Stage stage) {
         this.stage = stage;
         this.schemaService = new JsonSchemaService();
         this.httpService = new HttpService();
 
-        // --- Top: URL input and schema controls ---
+        // --- Top: URL input, auth, and schema controls ---
         urlField = new TextField();
         urlField.setPromptText("Enter JSON API URL...");
         urlField.setPrefWidth(500);
@@ -51,15 +68,73 @@ public class VisualizerTab extends BorderPane {
         schemaStatusLabel = new Label("No schema loaded");
         schemaStatusLabel.getStyleClass().add("status-label");
 
+        // Authentication controls
+        authTypeCombo = new ComboBox<>();
+        authTypeCombo.getItems().addAll("No Auth", "Basic Auth", "Bearer Token");
+        authTypeCombo.setValue("No Auth");
+
+        usernameField = new TextField();
+        usernameField.setPromptText("Username");
+        usernameField.setPrefWidth(120);
+
+        passwordField = new PasswordField();
+        passwordField.setPromptText("Password");
+        passwordField.setPrefWidth(120);
+
+        tokenField = new TextField();
+        tokenField.setPromptText("Bearer token...");
+        tokenField.setPrefWidth(300);
+
+        basicAuthBox = new HBox(8, new Label("User:"), usernameField, new Label("Pass:"), passwordField);
+        basicAuthBox.setAlignment(Pos.CENTER_LEFT);
+        basicAuthBox.setVisible(false);
+        basicAuthBox.setManaged(false);
+
+        bearerAuthBox = new HBox(8, new Label("Token:"), tokenField);
+        bearerAuthBox.setAlignment(Pos.CENTER_LEFT);
+        bearerAuthBox.setVisible(false);
+        bearerAuthBox.setManaged(false);
+
+        authTypeCombo.setOnAction(e -> {
+            String selected = authTypeCombo.getValue();
+            basicAuthBox.setVisible("Basic Auth".equals(selected));
+            basicAuthBox.setManaged("Basic Auth".equals(selected));
+            bearerAuthBox.setVisible("Bearer Token".equals(selected));
+            bearerAuthBox.setManaged("Bearer Token".equals(selected));
+        });
+
         HBox urlBar = new HBox(10, new Label("URL:"), urlField, fetchBtn);
         urlBar.setAlignment(Pos.CENTER_LEFT);
+
+        HBox authBar = new HBox(10, new Label("Auth:"), authTypeCombo, basicAuthBox, bearerAuthBox);
+        authBar.setAlignment(Pos.CENTER_LEFT);
 
         HBox schemaBar = new HBox(10, loadSchemaBtn, schemaStatusLabel);
         schemaBar.setAlignment(Pos.CENTER_LEFT);
 
-        VBox topBox = new VBox(10, urlBar, schemaBar);
+        VBox topBox = new VBox(10, urlBar, authBar, schemaBar);
         topBox.setPadding(new Insets(15));
         setTop(topBox);
+
+        // --- Search bar ---
+        searchField = new TextField();
+        searchField.setPromptText("Search JSON (keys, values, paths)... Ctrl+F to focus");
+        searchField.setPrefWidth(400);
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> applySearch(newVal));
+
+        Button clearSearchBtn = new Button("✕");
+        clearSearchBtn.setOnAction(e -> {
+            searchField.clear();
+            searchField.requestFocus();
+        });
+
+        searchResultsLabel = new Label("");
+        searchResultsLabel.getStyleClass().add("status-label");
+
+        searchBar = new HBox(8, new Label("🔍"), searchField, clearSearchBtn, searchResultsLabel);
+        searchBar.setAlignment(Pos.CENTER_LEFT);
+        searchBar.setPadding(new Insets(5, 15, 5, 15));
+        searchBar.setStyle("-fx-background-color: #f5f5f5; -fx-border-color: #ddd; -fx-border-width: 0 0 1 0;");
 
         // --- Center: Table + Tree split ---
         tableView = new JsonTableView();
@@ -83,7 +158,19 @@ public class VisualizerTab extends BorderPane {
         contentSplit.getItems().addAll(viewTabs, validationArea);
         contentSplit.setDividerPositions(0.8);
 
-        setCenter(contentSplit);
+        VBox centerBox = new VBox(searchBar, contentSplit);
+        VBox.setVgrow(contentSplit, Priority.ALWAYS);
+        setCenter(centerBox);
+
+        // Ctrl+F shortcut to focus search
+        this.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.getAccelerators().put(
+                        new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN),
+                        () -> searchField.requestFocus()
+                );
+            }
+        });
     }
 
     private void loadSchema() {
@@ -115,7 +202,8 @@ public class VisualizerTab extends BorderPane {
         }
 
         try {
-            JsonNode json = httpService.fetchJson(url);
+            Map<String, String> headers = buildAuthHeaders();
+            JsonNode json = httpService.fetchJson(url, headers);
 
             // Validate against schema if loaded
             if (schemaService.hasSchema()) {
@@ -146,6 +234,41 @@ public class VisualizerTab extends BorderPane {
             validationArea.setStyle("-fx-text-fill: red;");
             showAlert("Fetch failed: " + e.getMessage());
         }
+    }
+
+    private void applySearch(String searchText) {
+        tableView.filter(searchText);
+        treeView.filter(searchText);
+
+        if (searchText == null || searchText.isBlank()) {
+            searchResultsLabel.setText("");
+        } else {
+            searchResultsLabel.setText("Filtering by: \"" + searchText + "\"");
+            searchResultsLabel.setStyle("-fx-text-fill: #666;");
+        }
+    }
+
+    private Map<String, String> buildAuthHeaders() {
+        String authType = authTypeCombo.getValue();
+        if ("Basic Auth".equals(authType)) {
+            String username = usernameField.getText().trim();
+            String password = passwordField.getText();
+            if (!username.isEmpty()) {
+                String encoded = Base64.getEncoder()
+                        .encodeToString((username + ":" + password).getBytes());
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Basic " + encoded);
+                return headers;
+            }
+        } else if ("Bearer Token".equals(authType)) {
+            String token = tokenField.getText().trim();
+            if (!token.isEmpty()) {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        }
+        return null;
     }
 
     private void showAlert(String message) {

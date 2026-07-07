@@ -30,13 +30,20 @@ public class HttpService {
     }
 
     public JsonNode fetchJson(String url) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
+        return fetchJson(url, null);
+    }
+
+    public JsonNode fetchJson(String url, Map<String, String> headers) throws IOException, InterruptedException {
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Accept", "application/json")
-                .GET()
-                .build();
+                .GET();
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        if (headers != null) {
+            headers.forEach(requestBuilder::header);
+        }
+
+        HttpResponse<String> response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() >= 200 && response.statusCode() < 300) {
             return objectMapper.readTree(response.body());
