@@ -20,3 +20,5 @@ user-validation-schema.json
 jdk-25/
 jdk-25.0.2.zip
 
+mvnw
+.mvn/jvm.config
