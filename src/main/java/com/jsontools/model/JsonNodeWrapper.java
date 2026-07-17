@@ -62,9 +62,69 @@ public class JsonNodeWrapper {
         if (node.isNumber()) return node.asText();
         if (node.isBoolean()) return node.asText();
         if (node.isNull()) return "null";
-        if (node.isObject()) return "{...} (" + node.size() + " fields)";
-        if (node.isArray()) return "[...] (" + node.size() + " items)";
+        if (node.isObject()) return toInlineObject();
+        if (node.isArray()) return toInlineArray();
         return node.toString();
+    }
+
+    /**
+     * Inline representation of an object: {key1: val1, key2: val2, ...}
+     */
+    private String toInlineObject() {
+        StringBuilder sb = new StringBuilder("{");
+        var fields = node.fields();
+        int count = 0;
+        while (fields.hasNext() && count < 5) {
+            if (count > 0) sb.append(", ");
+            var entry = fields.next();
+            sb.append(entry.getKey()).append(": ");
+            JsonNode val = entry.getValue();
+            if (val.isTextual()) sb.append("\"").append(truncate(val.asText(), 20)).append("\"");
+            else if (val.isValueNode()) sb.append(val.asText());
+            else if (val.isObject()) sb.append("{..}");
+            else if (val.isArray()) sb.append("[").append(val.size()).append("]");
+            count++;
+        }
+        if (node.size() > 5) sb.append(", ...(+").append(node.size() - 5).append(")");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Inline representation of an array: [val1, val2, val3, ...]
+     */
+    private String toInlineArray() {
+        StringBuilder sb = new StringBuilder("[");
+        int limit = Math.min(node.size(), 6);
+        for (int i = 0; i < limit; i++) {
+            if (i > 0) sb.append(", ");
+            JsonNode item = node.get(i);
+            if (item.isTextual()) sb.append("\"").append(truncate(item.asText(), 15)).append("\"");
+            else if (item.isValueNode()) sb.append(item.asText());
+            else if (item.isObject()) {
+                // Show first field as hint
+                var fields = item.fields();
+                if (fields.hasNext()) {
+                    var first = fields.next();
+                    sb.append("{").append(first.getKey()).append(": ");
+                    if (first.getValue().isValueNode()) sb.append(truncate(first.getValue().asText(), 10));
+                    else sb.append("...");
+                    sb.append(", ..}");
+                } else {
+                    sb.append("{}");
+                }
+            } else if (item.isArray()) {
+                sb.append("[").append(item.size()).append("]");
+            }
+        }
+        if (node.size() > limit) sb.append(", ...(+").append(node.size() - limit).append(")");
+        sb.append("]");
+        return sb.toString();
+    }
+
+    private static String truncate(String s, int maxLen) {
+        if (s.length() <= maxLen) return s;
+        return s.substring(0, maxLen) + "…";
     }
 
     public List<JsonNodeWrapper> getChildren() {

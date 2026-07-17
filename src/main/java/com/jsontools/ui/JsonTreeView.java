@@ -109,7 +109,12 @@ public class JsonTreeView extends BorderPane {
                 setStyle("");
             } else {
                 String icon = getIcon(item);
-                String displayText = item.getKey() + ": " + item.getValuePreview();
+                String displayText;
+                if (item.isPrimitive()) {
+                    displayText = item.getKey() + ": " + item.getValuePreview();
+                } else {
+                    displayText = item.getKey() + " (" + item.getType() + "): " + item.getValuePreview();
+                }
                 setText(icon + " " + displayText);
 
                 boolean highlighted = !currentSearch.isBlank() && matchesSearch(item);
@@ -126,7 +131,7 @@ public class JsonTreeView extends BorderPane {
                     Tooltip tooltip = new Tooltip(item.toString());
                     tooltip.setStyle("-fx-font-family: monospace; -fx-font-size: 12;");
                     tooltip.setShowDelay(javafx.util.Duration.millis(300));
-                    tooltip.setMaxWidth(500);
+                    tooltip.setMaxWidth(600);
                     tooltip.setWrapText(true);
                     setTooltip(tooltip);
                 } else {
